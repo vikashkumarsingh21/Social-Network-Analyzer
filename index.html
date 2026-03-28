@@ -4,12 +4,59 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Netlyze — Social Network Analyzer</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=3" />
   <!-- Plus Jakarta Sans: characterful, modern, not overused -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" defer></script>
+  <!-- Socket.io client -->
+  <script src="http://localhost:5000/socket.io/socket.io.js" defer></script>
 </head>
 <body>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  AUTHENTICATION OVERLAY         ║
+       ╚══════════════════════════════════╝ -->
+  <div id="authScreen" class="auth-screen" onclick="if(event.target===this)App.skipAuth()">
+    <div class="auth-box">
+      <div class="auth-brand">
+        <svg width="42" height="42" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="7" fill="url(#alg1)"/>
+          <circle cx="6"  cy="10" r="4" fill="url(#alg1)" opacity=".7"/>
+          <circle cx="30" cy="10" r="4" fill="url(#alg1)" opacity=".7"/>
+          <circle cx="6"  cy="26" r="4" fill="url(#alg1)" opacity=".5"/>
+          <circle cx="30" cy="26" r="4" fill="url(#alg1)" opacity=".5"/>
+          <line x1="18" y1="18" x2="6"  y2="10" stroke="url(#alg1)" stroke-width="1.5" opacity=".5"/>
+          <line x1="18" y1="18" x2="30" y2="10" stroke="url(#alg1)" stroke-width="1.5" opacity=".5"/>
+          <line x1="18" y1="18" x2="6"  y2="26" stroke="url(#alg1)" stroke-width="1.5" opacity=".4"/>
+          <line x1="18" y1="18" x2="30" y2="26" stroke="url(#alg1)" stroke-width="1.5" opacity=".4"/>
+          <defs>
+            <linearGradient id="alg1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <h2>Netlyze Access</h2>
+      <p class="auth-sub">Enter your credentials to manage the graph</p>
+      
+      <div class="auth-form">
+        <input type="text" id="authName" class="auth-input" placeholder="Name (for registration)" autocomplete="off" />
+        <input type="email" id="authEmail" class="auth-input" placeholder="Email Address" autocomplete="email" />
+        <input type="password" id="authPassword" class="auth-input" placeholder="Password" autocomplete="current-password" />
+        
+        <div class="auth-actions">
+          <button class="btn-primary full" onclick="App.login()">Log In</button>
+          <button class="btn-secondary full" onclick="App.register()">Register</button>
+        </div>
+        <div class="form-feedback" id="authFeedback"></div>
+        <div style="text-align:center; margin-top:0.4rem;">
+          <button onclick="App.skipAuth()" style="background:none;border:none;cursor:pointer;font-size:0.75rem;color:var(--text-3);font-family:inherit;text-decoration:underline;text-underline-offset:3px;">
+            Skip — Try the Demo →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ╔══════════════════════════════════╗
        ║  LOADING SCREEN                 ║
@@ -511,6 +558,28 @@
               </div>
               <div id="adjMatrix" class="adj-matrix-wrap">
                 <p class="list-empty">Add users to see the matrix.</p>
+              </div>
+            </div>
+
+            <!-- Network Clustering -->
+            <div class="panel panel--full">
+              <div class="panel-head">
+                <h3 class="panel-title">Clustering Coefficient</h3>
+                <span class="panel-hint" id="ccGlobalHint">Avg CC: 0.00</span>
+              </div>
+              <div id="clusteringList" class="analytics-list-wrap">
+                <p class="list-empty">Loading clustering data...</p>
+              </div>
+            </div>
+
+            <!-- Community Detection -->
+            <div class="panel panel--full">
+              <div class="panel-head">
+                <h3 class="panel-title">Detected Communities</h3>
+                <span class="panel-hint" id="commGlobalHint">0 components found</span>
+              </div>
+              <div id="communityList" class="analytics-list-wrap">
+                <p class="list-empty">Loading communities...</p>
               </div>
             </div>
           </div>

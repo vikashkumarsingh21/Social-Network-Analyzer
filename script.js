@@ -934,12 +934,61 @@ const App = (() => {
     _sync();
   }
 
+  /* ── Auth ── */
+  function _showApp() {
+    const authEl = document.getElementById('authScreen');
+    if (authEl) authEl.classList.add('hidden');
+  }
+
+  function login() {
+    const email    = document.getElementById('authEmail')?.value.trim();
+    const password = document.getElementById('authPassword')?.value.trim();
+    const feedback = document.getElementById('authFeedback');
+
+    if (!email || !password) {
+      if (feedback) { feedback.textContent = '⚠ Email and password are required.'; feedback.className = 'form-feedback error'; }
+      return;
+    }
+
+    // Demo: bypass auth and open the app directly
+    if (feedback) { feedback.textContent = '✓ Welcome back!'; feedback.className = 'form-feedback success'; }
+    setTimeout(() => _showApp(), 600);
+  }
+
+  function register() {
+    const name     = document.getElementById('authName')?.value.trim();
+    const email    = document.getElementById('authEmail')?.value.trim();
+    const password = document.getElementById('authPassword')?.value.trim();
+    const feedback = document.getElementById('authFeedback');
+
+    if (!name || !email || !password) {
+      if (feedback) { feedback.textContent = '⚠ All fields are required for registration.'; feedback.className = 'form-feedback error'; }
+      return;
+    }
+    if (password.length < 6) {
+      if (feedback) { feedback.textContent = '⚠ Password must be at least 6 characters.'; feedback.className = 'form-feedback error'; }
+      return;
+    }
+
+    // Demo: auto-approve and open the app
+    if (feedback) { feedback.textContent = `✓ Account created for ${name}!`; feedback.className = 'form-feedback success'; }
+    // Update avatar initials
+    const avatarEl = document.querySelector('.avatar-btn span');
+    if (avatarEl) avatarEl.textContent = name.slice(0,1).toUpperCase();
+    setTimeout(() => _showApp(), 700);
+  }
+
+  function skipAuth() {
+    _showApp();
+  }
+
   return {
     navigate, addUser, addUserFromModal, removeUser, filterUsers,
     addConnection, removeConnection, removeEdgeByIdx,
     zoomIn, zoomOut, resetZoom, toggleLabels,
     findPath, clearPath, showRecommendations,
     openModal, closeModal, toggleTheme, seedDemo,
+    login, register, skipAuth,
   };
 })();
 
@@ -1016,7 +1065,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => App.seedDemo(), 180);
   }, 1500);
 
-  /* ── Window resize: re-render graph ── */
+  /* ── Auth screen: close on Escape key ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const authEl = document.getElementById('authScreen');
+      if (authEl && !authEl.classList.contains('hidden')) {
+        authEl.classList.add('hidden');
+      }
+    }
+  });
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);

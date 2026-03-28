@@ -11,18 +11,15 @@ const {
   searchUsers,
   deleteUser 
 } = require('../controllers/userController');
+const { protect, authorize } = require('../middleware/auth');
 const { validateObjectId } = require('../middleware/validateObjectId');
 
-// Search route must be defined before /:id routes
 router.get('/search', searchUsers);
 
-// GET  /api/users      — get all users
-// POST /api/users      — create a new user (Unprotected for frontend integration)
 router.route('/')
-  .get(getAllUsers)
-  .post(createUser);
+  .get(getAllUsers) // public
+  .post(protect, authorize('admin'), createUser); // only admins can force create nodes directly, normal users use /register
 
-// DELETE /api/users/:id — delete user + their connections (Unprotected for frontend integration)
-router.delete('/:id', validateObjectId('id'), deleteUser);
+router.delete('/:id', protect, authorize('admin'), validateObjectId('id'), deleteUser);
 
 module.exports = router;

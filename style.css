@@ -132,6 +132,137 @@ ul, ol { list-style: none; }
 .loader-text { font-size: .78rem; color: var(--text-3); letter-spacing: .06em; }
 
 /* ──────────────────────────────────────
+   AUTH SCREEN
+────────────────────────────────────── */
+.auth-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 60% 40%, rgba(99,102,241,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(167,139,250,0.12) 0%, transparent 50%),
+              var(--bg);
+  backdrop-filter: blur(2px);
+  padding: 1rem;
+  transition: opacity 0.4s var(--ease), visibility 0.4s;
+}
+.auth-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.auth-box {
+  background: var(--surface-1);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 2rem 2rem;
+  width: min(400px, 92vw);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.55),
+              0 0 0 1px rgba(99,102,241,0.08),
+              inset 0 1px 0 rgba(255,255,255,0.05);
+  animation: modal-in 0.3s var(--ease) both;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle glow accent behind the box */
+.auth-box::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: 50%;
+  transform: translateX(-50%);
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.auth-brand svg {
+  filter: drop-shadow(0 0 12px rgba(99,102,241,0.4));
+}
+
+.auth-box h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--text-1);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.35rem;
+}
+
+.auth-sub {
+  font-size: 0.78rem;
+  color: var(--text-3);
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0 !important;
+}
+
+.auth-input {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  font-size: 0.88rem;
+  font-family: inherit;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color var(--t), box-shadow var(--t), background var(--t);
+}
+.auth-input::placeholder {
+  color: var(--text-3);
+}
+.auth-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background: var(--surface-3);
+}
+
+.auth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.25rem;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 0.83rem;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-md);
+  cursor: pointer;
+  transition: background var(--t), color var(--t), border-color var(--t);
+}
+.btn-secondary:hover {
+  background: var(--surface-3);
+  color: var(--text-1);
+  border-color: rgba(99,102,241,0.3);
+}
+
+/* ──────────────────────────────────────
    APP SHELL
 ────────────────────────────────────── */
 .app-shell {

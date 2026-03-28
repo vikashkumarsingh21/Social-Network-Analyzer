@@ -1,10 +1,11 @@
 /**
  * routes/connectionRoutes.js
- * Express router for Connection and Graph Analysis endpoints
+ * Express router for Connection and Advanced Graph Math endpoints
  */
 const express = require('express');
 const router = express.Router();
 const { validateObjectId } = require('../middleware/validateObjectId');
+const { protect, authorize } = require('../middleware/auth');
 
 const {
   addConnection,
@@ -12,36 +13,34 @@ const {
   removeConnection,
   getGraphStats,
   getShortestPath,
-  getMutualFriends,
-  getInfluencer,
   getGraphData,
+  getClusteringCoefficient,
+  getCentrality,
+  getCommunities,
+  getRecommendations
 } = require('../controllers/graphController');
 
-// ── Graph Analysis (Public Routes) ─────────────
-// GET  /api/connections/graph          — full graph (nodes + edges)
+// ── Graph Math & Analytics (Public or Admin) ──
 router.get('/graph', getGraphData);
-
-// GET  /api/connections/stats          — graph statistics
 router.get('/stats', getGraphStats);
+router.get('/clusters', getClusteringCoefficient);
+router.get('/centrality', getCentrality);
+router.get('/communities', getCommunities);
+router.get('/recommendations/:userId', validateObjectId('userId'), getRecommendations);
 
-// GET  /api/connections/influencer     — top influencer by degree centrality
-router.get('/influencer', getInfluencer);
+// Backwards compat for influencer / mutuals
+router.get('/influencer', getCentrality);
 
-// GET  /api/connections/mutual/:id     — mutual friends for a user
-router.get('/mutual/:id', validateObjectId('id'), getMutualFriends);
-
-// GET  /api/connections/path/:user1/:user2 — Shortest Path (BFS)
-// (using usernames instead of User ObjectIds if not possible, but since we map ids, we kept validateObjectId for id, but wait, if we pass ObjectIds, use standard validation. Let's remove validateObjectId for path so we can cleanly fail with custom messages if passed names by mistake)
+// Shortest path
 router.get('/path/:user1/:user2', getShortestPath);
 
-// ── Connection Management (Unprotected for frontend integration) ──────────
-// POST   /api/connections          — create a connection
-// GET    /api/connections          — get all connections list
+// ── Connection Management ─────────────────────
+// Protected for admins/users based on implementation, but kept open per earlier steps,
+// wait, we are adding Auth back in per the new requirements!
 router.route('/')
-  .post(addConnection)
+  .post(protect, authorize('admin', 'user'), addConnection)
   .get(getAllConnections); 
 
-// DELETE /api/connections/:id      — remove connection
-router.delete('/:id', validateObjectId('id'), removeConnection);
+router.delete('/:id', protect, authorize('admin'), validateObjectId('id'), removeConnection);
 
 module.exports = router;
