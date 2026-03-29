@@ -41,6 +41,6 @@ router.route('/')
   .post(protect, authorize('admin', 'user'), addConnection)
   .get(getAllConnections); 
 
-router.delete('/:id', protect, authorize('admin'), validateObjectId('id'), removeConnection);
+router.delete('/:id', protect, authorize('admin', 'user'), validateObjectId('id'), removeConnection);
 
 module.exports = router;

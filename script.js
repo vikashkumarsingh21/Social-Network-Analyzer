@@ -16,6 +16,7 @@ const Store = (() => {
   let usersDict = {};    // name -> id
   let edges   = [];      // {a, b, id}[]
   let adjList = new Map(); // Map<string, Set<string>>
+  let lastStateStr = ''; // Used to track state changes
 
   async function fetchGraph() {
     try {
@@ -32,7 +33,12 @@ const Store = (() => {
         b: e.targetName
       }));
       _buildAdj();
-      if(typeof App !== 'undefined' && App._syncRaw) App._syncRaw();
+
+      const newStateStr = users.length + ':' + edges.length;
+      const graphDidChange = (newStateStr !== lastStateStr);
+      lastStateStr = newStateStr;
+
+      if(typeof App !== 'undefined' && App._syncRaw) App._syncRaw(graphDidChange);
     } catch(err) { console.error('Error fetching graph:', err); }
   }
 
@@ -60,6 +66,7 @@ const Store = (() => {
       const data = await res.json();
       if(data.success) {
         _log('add', `<strong>${name}</strong> joined the network`);
+        await fetchGraph(); // Guarantee instant UI update
         return true;
       } else {
         UI.toast(data.message || 'Error adding user', 'error');
@@ -77,6 +84,7 @@ const Store = (() => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       _log('remove', `<strong>${name}</strong> removed from network`);
+      await fetchGraph(); // Guarantee instant UI update
     } catch(err) {}
   }
 
@@ -93,6 +101,7 @@ const Store = (() => {
       });
       if((await res.json()).success) {
         _log('connect', `<strong>${a}</strong> connected to <strong>${b}</strong>`);
+        await fetchGraph(); // Guarantee instant UI update
         return true;
       }
     } catch(err) {}
@@ -108,6 +117,7 @@ const Store = (() => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       _log('remove', `Connection between <strong>${a}</strong> and <strong>${b}</strong> removed`);
+      await fetchGraph(); // Guarantee instant UI update
       return true;
     } catch(err) {}
     return false;
@@ -787,11 +797,62 @@ const UI = (() => {
     );
   }
 
+  /* ── Clustering & Communities ── */
+  async function renderClustering() {
+    const list = document.getElementById('clusteringList');
+    const hint = document.getElementById('ccGlobalHint');
+    if (!list) return;
+    if (!Store.edgeCount) {
+      list.innerHTML = '<p class="list-empty">Add connections to detect clustering.</p>';
+      if (hint) hint.textContent = 'Avg CC: 0.00';
+      return;
+    }
+    try {
+      const res = await fetch('http://localhost:5000/api/connections/clusters');
+      const { data } = await res.json();
+      if (hint) hint.textContent = `Avg CC: ${data.averageCC.toFixed(2)}`;
+      list.innerHTML = data.nodes.slice(0, 5).map((n, i) => `
+        <div class="activity-item" style="animation-delay:${i*0.05}s">
+          <div class="activity-dot" style="background:#8b5cf6"></div>
+          <div>
+            <div class="activity-text">${_esc(n.name)}</div>
+            <div class="activity-time">CC: ${n.cc.toFixed(2)} (${n.degree} conn.)</div>
+          </div>
+        </div>
+      `).join('');
+    } catch(err) { list.innerHTML = '<p class="list-empty">Error loading clustering data.</p>'; }
+  }
+
+  async function renderCommunities() {
+    const list = document.getElementById('communityList');
+    const hint = document.getElementById('commGlobalHint');
+    if (!list) return;
+    if (!Store.edgeCount) {
+      list.innerHTML = '<p class="list-empty">Add connections to detect communities.</p>';
+      if (hint) hint.textContent = '0 components found';
+      return;
+    }
+    try {
+      const res = await fetch('http://localhost:5000/api/connections/communities');
+      const { data } = await res.json();
+      if (hint) hint.textContent = `${data.length} component${data.length !== 1 ? 's' : ''} found`;
+      list.innerHTML = data.map((c, i) => `
+        <div class="activity-item" style="animation-delay:${i*0.05}s">
+          <div class="activity-dot" style="background:#10b981"></div>
+          <div>
+            <div class="activity-text">Community ${i+1} (${c.length} members)</div>
+            <div class="activity-time">${c.slice(0, 8).map(m=>_esc(m.name)).join(', ')}${c.length>8?'...':''}</div>
+          </div>
+        </div>
+      `).join('');
+    } catch(err) { list.innerHTML = '<p class="list-empty">Error loading communities data.</p>'; }
+  }
+
   return {
     toast, setFeedback, refreshDropdowns,
     renderUserList, renderEdgeList, renderDashboard,
     renderActivity, renderInfluencers, renderRecommendations,
-    renderAdjMatrix, setBreadcrumb, handleGlobalSearch,
+    renderAdjMatrix, renderClustering, renderCommunities, setBreadcrumb, handleGlobalSearch,
   };
 })();
 
@@ -803,7 +864,7 @@ const App = (() => {
   let currentView = 'dashboard';
 
   /* ── Full re-render after any state change ── */
-  function _syncRaw() {
+  function _syncRaw(graphDidChange = true) {
     UI.refreshDropdowns();
     UI.renderUserList();
     UI.renderEdgeList();
@@ -811,23 +872,17 @@ const App = (() => {
     UI.renderActivity();
     UI.renderInfluencers();
     UI.renderAdjMatrix();
-    Graph.renderAll();
+    UI.renderClustering();
+    UI.renderCommunities();
+    if (graphDidChange) {
+      Graph.renderAll();
+    }
     const sel = document.getElementById('recUser');
     if (sel?.value) UI.renderRecommendations(sel.value);
   }
 
   function _sync() {
-    UI.refreshDropdowns();
-    UI.renderUserList();
-    UI.renderEdgeList();
-    UI.renderDashboard();
-    UI.renderActivity();
-    UI.renderInfluencers();
-    UI.renderAdjMatrix();
-    Graph.renderAll();
-    // Update rec if visible
-    const sel = document.getElementById('recUser');
-    if (sel?.value) UI.renderRecommendations(sel.value);
+    _syncRaw(true);
   }
 
   /* ── Navigation ── */
@@ -1049,6 +1104,7 @@ const App = (() => {
   }
 
   function skipAuth() {
+    UI.toast('You are in view-only mode. Register to add data!', 'warning');
     _showApp();
   }
 
@@ -1124,6 +1180,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loader').classList.add('hidden');
     document.getElementById('app').classList.add('visible');
 
+    // Auto-bypass Auth Screen if token exists
+    if (localStorage.getItem('token')) {
+      const authEl = document.getElementById('authScreen');
+      if (authEl) authEl.classList.add('hidden');
+    }
+
     // Initial render (empty state) then seed demo
     UI.refreshDropdowns();
     UI.renderDashboard();
@@ -1131,8 +1193,14 @@ document.addEventListener('DOMContentLoaded', () => {
     UI.renderInfluencers();
     UI.renderAdjMatrix();
 
-    // Initial fetch from backend instead of seed demo
+    // Initial fetch from backend
     Store.fetchGraph();
+
+    // Auto-refresh (polling) every 5 seconds in the background
+    // This allows real-time updates without affecting the frontend user experience
+    setInterval(() => {
+      Store.fetchGraph();
+    }, 5000);
 
     if (window.io) {
       const socket = window.io('http://localhost:5000');
