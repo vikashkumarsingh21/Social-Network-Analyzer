@@ -6,6 +6,7 @@ const User = require('../models/User');
 const Connection = require('../models/Connection');
 const ErrorResponse = require('../utils/ErrorResponse');
 const { getIO } = require('../utils/socket'); // Real-time emitter
+const { clearGraphCache } = require('./graphController');
 
 const createUser = async (req, res, next) => {
   try {
@@ -17,6 +18,8 @@ const createUser = async (req, res, next) => {
 
     const user = await User.create({ name: name.trim(), email, password });
     user.password = undefined;
+
+    clearGraphCache();
 
     // Emit Real-Time Update
     getIO().emit('graphUpdated', { message: `User ${user.name} joined the network!` });
@@ -49,6 +52,8 @@ const deleteUser = async (req, res, next) => {
 
     await Connection.deleteMany({ $or: [{ user1: req.params.id }, { user2: req.params.id }] });
     await user.deleteOne();
+
+    clearGraphCache();
 
     // Emit Real-Time Update
     getIO().emit('graphUpdated', { message: `User ${user.name} left the network.` });

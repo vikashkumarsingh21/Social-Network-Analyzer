@@ -368,5 +368,5 @@ const getMutualFriends = async (req, res, next) => {
 module.exports = { 
   addConnection, getAllConnections, removeConnection, 
   getGraphStats, getCommunities, getClusteringCoefficient, getCentrality, getRecommendations,
-  getShortestPath, getMutualFriends, getGraphData 
+  getShortestPath, getMutualFriends, getGraphData, clearGraphCache
 };

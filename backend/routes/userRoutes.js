@@ -20,6 +20,6 @@ router.route('/')
   .get(getAllUsers) // public
   .post(protect, authorize('admin', 'user'), createUser); // normal users can create nodes via the UI
 
-router.delete('/:id', protect, authorize('admin'), validateObjectId('id'), deleteUser);
+router.delete('/:id', protect, authorize('admin', 'user'), validateObjectId('id'), deleteUser);
 
 module.exports = router;
