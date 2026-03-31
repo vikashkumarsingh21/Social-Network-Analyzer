@@ -1,0 +1,1047 @@
+% This document is compiled using pdfLaTeX
+% You can switch XeLaTeX/pdfLaTeX/LaTeX/LuaLaTeX in Settings
+
+\documentclass{article}
+
+\title{Title}
+\author{Your Name}
+\date{\today}
+%======================================================================
+%  SOCIAL NETWORK ANALYZER — DMS PROJECT REPORT
+%  Marwadi University | Department of AI, ML & DS | Semester IV
+%======================================================================
+\documentclass[12pt,a4paper]{report}
+
+%----------------------------------------------------------------------
+% PACKAGES
+%----------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[top=1in,bottom=1in,left=1.25in,right=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{tocloft}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{microtype}
+\usepackage{mdframed}
+\usepackage{tikz}
+\usepackage{fontawesome5}
+\usepackage{lmodern}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{mathptmx}   % Times-like serif font
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{afterpage}
+\usepackage{emptypage}
+\usepackage{ragged2e}
+
+%----------------------------------------------------------------------
+% COLOR PALETTE
+%----------------------------------------------------------------------
+\definecolor{PrimaryBlue}{RGB}{0,70,127}
+\definecolor{AccentBlue}{RGB}{0,120,215}
+\definecolor{LightBlue}{RGB}{220,235,250}
+\definecolor{DarkGray}{RGB}{50,50,50}
+\definecolor{MedGray}{RGB}{120,120,120}
+\definecolor{LightGray}{RGB}{245,245,245}
+\definecolor{BorderGray}{RGB}{200,200,200}
+\definecolor{White}{RGB}{255,255,255}
+\definecolor{Gold}{RGB}{212,175,55}
+\definecolor{SuccessGreen}{RGB}{0,128,96}
+
+%----------------------------------------------------------------------
+% HYPERREF SETUP
+%----------------------------------------------------------------------
+\hypersetup{
+  colorlinks   = true,
+  linkcolor    = PrimaryBlue,
+  urlcolor     = AccentBlue,
+  citecolor    = PrimaryBlue,
+  pdftitle     = {Social Network Analyzer — DMS Project Report},
+  pdfauthor    = {Vikas Kumar},
+  pdfsubject   = {Discrete Mathematical Structure},
+  pdfkeywords  = {Graph Theory, Social Network, DMS, Marwadi University},
+  bookmarksopen= true,
+  bookmarksnumbered=true
+}
+
+%----------------------------------------------------------------------
+% CHAPTER & SECTION TITLE FORMATTING
+%----------------------------------------------------------------------
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{PrimaryBlue}}
+  {\chaptertitlename\ \thechapter}
+  {8pt}
+  {\Huge}
+  [\vspace{2pt}\color{AccentBlue}\titlerule[1.5pt]]
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{PrimaryBlue}}
+  {\thesection}{1em}{}
+  [\color{BorderGray}\titlerule[0.5pt]]
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{AccentBlue}}
+  {\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{DarkGray}}
+  {\thesubsubsection}{1em}{}
+
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+
+%----------------------------------------------------------------------
+% HEADER / FOOTER
+%----------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{MedGray}\textit{Social Network Analyzer}}
+\fancyhead[R]{\small\color{MedGray}\textit{DMS Project Report}}
+\fancyhead[C]{\color{BorderGray}\rule[-0.3ex]{0.4pt}{2ex}}
+\fancyfoot[C]{\small\color{MedGray}--- \thepage\ ---}
+\fancyfoot[L]{\small\color{MedGray}\textit{Marwadi University}}
+\fancyfoot[R]{\small\color{MedGray}\textit{Dept.\ of AI, ML \& DS}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{\color{AccentBlue}\hrule width\headwidth height\headrulewidth}
+\renewcommand{\footrule}{\color{AccentBlue}\hrule width\headwidth height\footrulewidth}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\small\color{MedGray}--- \thepage\ ---}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+%----------------------------------------------------------------------
+% TABLE OF CONTENTS STYLE
+%----------------------------------------------------------------------
+\renewcommand{\cftchapfont}{\bfseries\color{PrimaryBlue}}
+\renewcommand{\cftchappagefont}{\bfseries\color{PrimaryBlue}}
+\renewcommand{\cftsecfont}{\color{DarkGray}}
+\renewcommand{\cftsecpagefont}{\color{DarkGray}}
+\setlength{\cftbeforechapskip}{8pt}
+
+%----------------------------------------------------------------------
+% LISTINGS (CODE)
+%----------------------------------------------------------------------
+\lstdefinestyle{webcode}{
+  backgroundcolor=\color{LightGray},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{AccentBlue}\bfseries,
+  commentstyle=\color{MedGray}\itshape,
+  stringstyle=\color{SuccessGreen},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{BorderGray},
+  numbers=left,
+  numberstyle=\tiny\color{MedGray},
+  numbersep=8pt,
+  showstringspaces=false,
+  tabsize=2,
+  captionpos=b
+}
+\lstset{style=webcode}
+
+%----------------------------------------------------------------------
+% CUSTOM TCOLORBOX ENVIRONMENTS
+%----------------------------------------------------------------------
+\newtcolorbox{infobox}[1][]{
+  enhanced,
+  colback=LightBlue,
+  colframe=AccentBlue,
+  fonttitle=\bfseries\color{White},
+  title=#1,
+  arc=4pt,
+  boxrule=0.8pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt
+}
+
+\newtcolorbox{definitionbox}[1][]{
+  enhanced,
+  colback=LightGray,
+  colframe=PrimaryBlue,
+  fonttitle=\bfseries\color{White},
+  attach boxed title to top left={yshift=-2mm,xshift=4mm},
+  boxed title style={colback=PrimaryBlue,arc=2pt},
+  title=#1,
+  arc=4pt,
+  boxrule=0.6pt,
+  left=6pt, right=6pt, top=8pt, bottom=6pt
+}
+
+%----------------------------------------------------------------------
+% LINE SPACING & PARAGRAPH
+%----------------------------------------------------------------------
+\setstretch{1.3}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+%======================================================================
+%  DOCUMENT BEGIN
+%======================================================================
+\begin{document}
+
+%======================================================================
+%  PAGE 1 — TITLE PAGE
+%======================================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\pagecolor{PrimaryBlue}
+\afterpage{\nopagecolor}
+
+\begin{tikzpicture}[remember picture, overlay]
+  % Decorative top bar
+  \fill[AccentBlue] (current page.north west)
+    rectangle ([yshift=-3cm]current page.north east);
+  % Gold accent line
+  \fill[Gold] ([yshift=-3cm]current page.north west)
+    rectangle ([yshift=-3.12cm]current page.north east);
+  % Bottom bar
+  \fill[AccentBlue] (current page.south west)
+    rectangle ([yshift=2.5cm]current page.south east);
+  \fill[Gold] ([yshift=2.5cm]current page.south west)
+    rectangle ([yshift=2.62cm]current page.south east);
+\end{tikzpicture}
+
+\vspace*{0.6cm}
+\begin{center}
+
+% TOP HEADER
+{\color{White}\fontsize{11}{13}\selectfont\bfseries
+FACULTY OF TECHNOLOGY\\[2pt]
+DEPARTMENT OF ARTIFICIAL INTELLIGENCE, MACHINE LEARNING \& DATA SCIENCE}
+
+\vspace{0.3cm}
+{\color{Gold}\rule{0.6\textwidth}{0.8pt}}
+
+\vspace{0.4cm}
+{\color{White!70}\fontsize{10}{12}\selectfont Marwadi University, Rajkot, Gujarat}
+
+\vspace{1.2cm}
+
+% DMS BADGE
+\begin{tcolorbox}[
+  enhanced, width=0.72\textwidth,
+  colback=AccentBlue!60!PrimaryBlue,
+  colframe=Gold,
+  arc=6pt, boxrule=1.2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  halign=center
+]
+{\color{White!80}\large\bfseries DMS PROJECT REPORT}\\[2pt]
+{\color{Gold}\small Subject Code: \textbf{01AI0402}}\\
+{\color{White!70}\small Discrete Mathematical Structure}
+\end{tcolorbox}
+
+\vspace{1.0cm}
+
+% PROJECT TITLE
+{\color{White}\fontsize{32}{38}\selectfont\bfseries Social Network}\\[4pt]
+{\color{Gold}\fontsize{32}{38}\selectfont\bfseries Analyzer}
+
+\vspace{0.5cm}
+{\color{Gold}\rule{0.5\textwidth}{1pt}}
+
+\vspace{0.8cm}
+
+% GRAPH ICON (TikZ)
+\begin{tikzpicture}[scale=1.0]
+  \tikzstyle{node}=[circle,draw=Gold,fill=AccentBlue,text=White,
+                    minimum size=28pt,font=\bfseries\small]
+  \node[node] (A) at (0,0)   {U1};
+  \node[node] (B) at (2,1.2) {U2};
+  \node[node] (C) at (4,0)   {U3};
+  \node[node] (D) at (2,-1.2){U4};
+  \node[node] (E) at (2,0)   {U5};
+  \draw[White!60,thick] (A)--(B) (A)--(D) (A)--(E);
+  \draw[White!60,thick] (B)--(E) (B)--(C);
+  \draw[White!60,thick] (C)--(E) (C)--(D);
+  \draw[White!60,thick] (D)--(E);
+\end{tikzpicture}
+
+\vspace{0.9cm}
+
+% SEMESTER & DATE
+\begin{tcolorbox}[
+  enhanced, width=0.55\textwidth,
+  colback=White!10!PrimaryBlue,
+  colframe=Gold!70,
+  arc=4pt, boxrule=0.8pt,
+  halign=center,
+  left=6pt, right=6pt, top=4pt, bottom=4pt
+]
+{\color{White}\bfseries Semester:} {\color{Gold}\bfseries IV}
+\hspace{1cm}
+{\color{White}Submitted On:} {\color{Gold}\bfseries \underline{\hspace{2.5cm}}}
+\end{tcolorbox}
+
+\vspace{1.0cm}
+
+% TEAM TABLE
+\begin{tcolorbox}[
+  enhanced, width=0.78\textwidth,
+  colback=White!5!PrimaryBlue,
+  colframe=Gold,
+  title={\bfseries\color{White} Team Details},
+  fonttitle=\bfseries,
+  attach boxed title to top center={yshift=-2mm},
+  boxed title style={colback=Gold,colframe=Gold,arc=2pt},
+  arc=6pt, boxrule=0.8pt
+]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{>{\color{Gold}\bfseries}c
+                >{\color{White}}l
+                >{\color{White!80}}c
+                >{\color{White!80}}c}
+\color{White!70}\bfseries Sr.\ No. &
+\color{White!70}\bfseries Name &
+\color{White!70}\bfseries Roll No. &
+\color{White!70}\bfseries Division \\
+\hline
+1 & Vikash kumar & 92460118467 & 4EN12 \\
+2 & P.Rokhiya khanamr & 92460118572 & 4EN12 \\
+3 & K.K.Prasanna kumari & 92460118581 & 4EN12 \\
+4 & P.Ruchitha & 92460118618 & 4EN12 \\
+5 & P.Kritika  & 92460118606 & 4EN12 \\
+6 & M.Vyshnavi & 92460118653 & 4EN12 \\
+7 & Delitha akula & 92460118636 & 4EN12 \\
+\end{tabular}
+\end{tcolorbox}
+
+\end{center}
+\end{titlepage}
+
+%======================================================================
+%  PAGE 2 — CERTIFICATE
+%======================================================================
+\clearpage
+\thispagestyle{empty}
+
+\begin{center}
+  {\color{PrimaryBlue}\rule{\textwidth}{2pt}}
+  \vspace{4pt}\\
+  {\color{PrimaryBlue}\fontsize{18}{22}\selectfont\bfseries CERTIFICATE}\\
+  \vspace{4pt}
+  {\color{AccentBlue}\rule{\textwidth}{1pt}}
+\end{center}
+
+\vspace{1.5cm}
+
+\begin{mdframed}[
+  linecolor=PrimaryBlue,
+  linewidth=1.2pt,
+  topline=true, bottomline=true,
+  leftline=true, rightline=true,
+  innerleftmargin=16pt, innerrightmargin=16pt,
+  innertopmargin=16pt, innerbottommargin=16pt,
+  backgroundcolor=LightGray
+]
+\setstretch{1.6}
+This is to certify that the project titled
+
+\begin{center}
+  {\Large\bfseries\color{PrimaryBlue}``Social Network Analyzer''}
+\end{center}
+
+has been successfully completed by the above-mentioned student(s) in partial fulfillment of the requirements for the subject \textbf{Discrete Mathematical Structure (01AI0402)}.
+
+The project demonstrates the practical implementation of \textbf{graph theory} concepts using a web-based system developed with \textbf{HTML}, \textbf{CSS}, and \textbf{JavaScript}.
+\end{mdframed}
+
+\vspace{2cm}
+
+\begin{center}
+  \textbf{Date:}\;\underline{\hspace{3cm}}
+\end{center}
+
+\vspace{2cm}
+
+\noindent
+\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+  \centering
+  \rule{5cm}{0.4pt}\\
+  {\bfseries\color{PrimaryBlue}Dr.\ Apratim Dutta}\\
+  \textit{Faculty In-charge}
+  &
+  \centering
+  \rule{5cm}{0.4pt}\\
+  {\bfseries\color{PrimaryBlue}Dr.\ Madhu Shukla}\\
+  \textit{Head of Department}
+\end{tabular}
+
+\vfill
+
+\begin{center}
+  {\small\color{MedGray}Faculty of Technology \(\cdot\) Marwadi University \(\cdot\) Rajkot, Gujarat}
+\end{center}
+
+%======================================================================
+%  PAGE 3 — TABLE OF CONTENTS
+%======================================================================
+\clearpage
+{
+  \hypersetup{linkcolor=PrimaryBlue}
+  \tableofcontents
+}
+\newpage
+
+%======================================================================
+%  CHAPTER 1 — ABSTRACT
+%======================================================================
+\chapter\textbf{\underline{Abstract}}
+
+\begin{infobox}[Project Overview]
+\textbf{Title:} Social Network Analyzer \hfill
+\textbf{Subject:} Discrete Mathematical Structure (01AI0402)\\
+\textbf{Technology:} HTML \(\cdot\) CSS \(\cdot\) JavaScript \hfill
+\textbf{Semester:} IV
+\end{infobox}
+
+\vspace{0.4cm}
+
+The \textbf{Social Network Analyzer} is a web-based system designed to model and visualize relationships between users using graph theory concepts from discrete mathematics. In modern digital systems, understanding relationships between entities is essential, and graph-based models provide an efficient way to represent such connections.
+
+This project focuses on developing an interactive platform where users can create \textbf{nodes} representing individuals and connect them through \textbf{edges} representing relationships. The system allows real-time visualization of networks, enabling users to understand how connections are formed and how structures evolve dynamically.
+
+Unlike traditional theoretical approaches, this system provides a practical implementation using web technologies such as \textbf{HTML}, \textbf{CSS}, and \textbf{JavaScript}. This ensures accessibility, simplicity, and ease of use, as the application runs directly in the browser without requiring additional software or backend systems.
+
+The main objective of this project is to bridge the gap between theoretical concepts of graph theory and their practical applications. By allowing users to interact with graph structures, the system enhances understanding and provides a foundation for advanced concepts such as:
+
+\begin{itemize}[leftmargin=2em, label={\color{AccentBlue}\faCheckCircle}]
+  \item Network analysis
+  \item Shortest paths
+  \item Connectivity
+\end{itemize}
+
+\section*{Project Repository}
+\addcontentsline{toc}{section}{Project Repository}
+
+The complete source code of this project is available on GitHub. 
+This repository contains all implementation files including HTML, CSS, and JavaScript used in the development of the Social Network Analyzer.
+
+\textbf{GitHub Repository Link:}  
+\url{https://github.com/vikashkumarsingh21/Social-Network-Analyzer}
+
+%======================================================================
+%  CHAPTER 2 — INTRODUCTION
+%======================================================================
+\chapter\textbf{\underline{Introduction}}
+
+\textbf{Discrete Mathematics} is a fundamental subject in computer science that provides the theoretical foundation for many computational systems. One of the most important topics within this field is \textbf{graph theory}, which is used to represent relationships between entities.
+
+In real-world applications, social networks are one of the most common examples where graph theory is applied. Platforms such as \textbf{Facebook}, \textbf{Instagram}, and \textbf{LinkedIn} rely heavily on graph-based structures to manage user relationships, recommend connections, and analyze interactions.
+
+\section{Graph Representation}
+
+In a graph:
+
+\begin{definitionbox}[Core Graph Elements]
+\begin{itemize}[leftmargin=1.5em, label={\color{PrimaryBlue}\(\bullet\)}]
+  \item \textbf{Nodes} — represent users or entities
+  \item \textbf{Edges} — represent relationships between users
+\end{itemize}
+\end{definitionbox}
+
+\section{Project Motivation}
+
+This project aims to provide a simple and interactive way to understand these concepts through a web-based system. Instead of only studying theoretical definitions, users can directly:
+
+\begin{enumerate}[leftmargin=2em, label={\color{PrimaryBlue}\bfseries\arabic*.}]
+  \item Create graphs by adding nodes
+  \item Connect nodes with edges
+  \item Visualize the resulting network structure
+\end{enumerate}
+
+The system is designed to be \textbf{user-friendly} and \textbf{accessible}. It allows users to input data, create connections, and observe how networks behave. By doing so, it helps users develop a deeper understanding of graph theory and its practical applications.
+
+%======================================================================
+%  CHAPTER 3 — BACKGROUND
+%======================================================================
+\chapter\textbf{\underline{Background}}
+
+\textbf{Graph theory} is a branch of discrete mathematics that studies graphs as a mathematical representation of relationships.
+
+\section{Formal Definition}
+
+A graph is formally defined as:
+
+\begin{definitionbox}[Graph Definition]
+\[
+  G = (V,\, E)
+\]
+\begin{itemize}[leftmargin=1.5em]
+  \item \(V\) — the set of \textbf{vertices} (nodes)
+  \item \(E\) — the set of \textbf{edges} (connections)
+\end{itemize}
+In the context of this project, vertices represent \textbf{users} and edges represent \textbf{relationships}.
+\end{definitionbox}
+
+\section{Types of Graphs}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{>{\bfseries\color{PrimaryBlue}}l p{0.65\textwidth}}
+\toprule
+Type & Description \\
+\midrule
+Undirected Graph & Represents \textbf{mutual} relationships. \\
+Directed Graph   & Represents \textbf{one-way} relationships. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.4cm}
+This project primarily uses \textbf{undirected graphs} to represent mutual connections.
+
+\section{Key Concepts}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{>{\bfseries\color{PrimaryBlue}}l X}
+\toprule
+Concept & Definition \\
+\midrule
+Degree       & The number of connections a node has. \\
+Path         & A sequence of nodes connected through edges. \\
+Connectivity & Determines whether nodes are reachable from one another. \\
+Components   & Subgroups (connected subgraphs) within a network. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\vspace{0.4cm}
+
+These concepts are widely used in real-world applications such as social media platforms, communication networks, and recommendation systems.
+
+%======================================================================
+%  CHAPTER 4 — LITERATURE REVIEW
+%======================================================================
+\chapter\textbf{\underline{Literature Review}}
+
+\textbf{Social Network Analysis (SNA)} is a widely studied area in computer science and sociology. It focuses on analyzing relationships between entities using graph-based models.
+
+\section{Research Overview}
+
+Researchers have developed various techniques to understand network behavior, including:
+
+\begin{itemize}[leftmargin=2em, label={\color{AccentBlue}\faAngleRight}]
+  \item Centrality measures
+  \item Clustering algorithms
+  \item Connectivity analysis
+\end{itemize}
+
+These techniques help identify \textbf{influential nodes}, detect \textbf{communities}, and analyze \textbf{patterns} within networks.
+
+\section{Modern Applications}
+
+Modern systems leverage these concepts for a variety of purposes:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{c >{\color{DarkGray}}l}
+\toprule
+\bfseries\color{PrimaryBlue} Application & \bfseries\color{PrimaryBlue} Description \\
+\midrule
+\faUserFriends & Friend recommendation systems \\
+\faLightbulb   & Content suggestion algorithms \\
+\faNetworkWired & Network optimization \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Research Gap}
+
+However, most existing tools are \textbf{complex} and require advanced knowledge. This project simplifies these concepts by providing a basic visualization system that allows users to understand graph structures without requiring deep technical expertise.
+
+%======================================================================
+%  CHAPTER 5 — PROJECT DESCRIPTION
+%======================================================================
+\chapter\textbf{\underline{Project Description}}
+
+The \textbf{Social Network Analyzer} is a web-based application that enables users to create and visualize networks interactively.
+
+\section{Core Functionalities}
+
+The system allows users to:
+
+\begin{itemize}[leftmargin=2em, label={\color{AccentBlue}\faCheckCircle}]
+  \item Add \textbf{nodes} representing individuals
+  \item Connect nodes to form \textbf{relationships} (edges)
+  \item \textbf{Visualize} the graph structure dynamically
+\end{itemize}
+
+\section{Technology Stack}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{>{\bfseries\color{PrimaryBlue}}c
+                >{\color{DarkGray}}l
+                >{\color{MedGray}}l}
+\toprule
+\bfseries\color{PrimaryBlue} Technology &
+\bfseries\color{PrimaryBlue} Role &
+\bfseries\color{PrimaryBlue} Details \\
+\midrule
+\faHtml5\ HTML       & Structure & Defines layout, inputs, display areas \\
+\faCss3Alt\ CSS      & Design    & Styling, responsiveness, appearance \\
+\faJsSquare\ JavaScript & Logic & Graph operations, event handling \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The system is designed to be \textbf{simple}, \textbf{efficient}, and \textbf{easy to use}. It provides an interactive environment where users can explore graph structures and understand relationships.
+
+%======================================================================
+%  CHAPTER 6 — METHODOLOGY
+%======================================================================
+\chapter\textbf{\underline{Methodology}}
+
+The development of the Social Network Analyzer follows a \textbf{structured and systematic methodology} to ensure clarity, functionality, and usability.
+
+\section{Phase 1: Requirement Analysis}
+
+The methodology begins with \textbf{requirement analysis}, where the need for a system that can visually represent graph-based relationships is identified. The objective is to create a platform where users can interact with graph structures in real time without requiring advanced technical knowledge.
+
+\section{Phase 2: Design}
+
+The next step involves the \textbf{design phase}, where the user interface is planned. The focus is on simplicity and usability so that users can easily:
+
+\begin{itemize}[leftmargin=2em, label={\color{AccentBlue}\faArrowRight}]
+  \item Add nodes
+  \item Create connections
+  \item Visualize the graph
+\end{itemize}
+
+The layout is designed using \textbf{HTML} for structure and \textbf{CSS} for styling, ensuring a clean and user-friendly interface.
+
+\section{Phase 3: Implementation}
+
+During implementation, \textbf{JavaScript} is used to develop the core functionality. The logic is implemented such that user inputs directly affect the graph structure:
+
+\begin{itemize}[leftmargin=2em, label={\color{PrimaryBlue}\faCode}]
+  \item When a user adds a node, it is dynamically stored and displayed.
+  \item When a connection is created between nodes, the system updates the graph accordingly.
+\end{itemize}
+
+The system follows an \textbf{event-driven approach}, where user actions (clicking buttons, entering data) trigger specific functions that process input and update the graph in real time.
+
+\section{Phase 4: Testing}
+
+Finally, the \textbf{testing phase} ensures the system works correctly under different conditions. Various scenarios are tested, such as:
+
+\begin{itemize}[leftmargin=2em, label={\color{SuccessGreen}\faCheckCircle}]
+  \item Adding multiple nodes
+  \item Connecting nodes
+  \item Handling invalid inputs
+\end{itemize}
+
+This improves the reliability and performance of the system.
+
+\section{Development Workflow}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.6cm,
+  box/.style={rectangle, rounded corners=4pt, draw=PrimaryBlue,
+              fill=LightBlue, text=PrimaryBlue, font=\bfseries\small,
+              minimum width=2.6cm, minimum height=0.8cm},
+  arr/.style={->, thick, color=AccentBlue}
+]
+  \node[box] (req) {Requirement\\Analysis};
+  \node[box, right of=req, xshift=1.4cm] (des) {Design};
+  \node[box, right of=des, xshift=1.4cm] (imp) {Implementation};
+  \node[box, right of=imp, xshift=1.4cm] (tst) {Testing};
+  \draw[arr] (req)--(des);
+  \draw[arr] (des)--(imp);
+  \draw[arr] (imp)--(tst);
+\end{tikzpicture}
+\end{center}
+
+%======================================================================
+%  CHAPTER 7 — IMPLEMENTATION / SYSTEM DESIGN
+%======================================================================
+\chapter\textbf{\underline{Implementation \& System Design}}
+
+The Social Network Analyzer is implemented as a \textbf{client-side web application}, where all processing is performed within the browser. This eliminates the need for a backend server and makes the system lightweight and easy to deploy.
+
+\section{System Architecture}
+
+The system architecture consists of three main components:
+
+\subsection{User Interface Layer}
+
+Responsible for capturing user input, including:
+\begin{itemize}[leftmargin=2em, label={\color{AccentBlue}\faLayerGroup}]
+  \item Input fields for node names
+  \item Buttons for add/connect operations
+  \item Display areas for the graph
+\end{itemize}
+
+\subsection{Logic Layer}
+
+Implemented using JavaScript; acts as the \textbf{core} of the system:
+\begin{itemize}[leftmargin=2em, label={\color{PrimaryBlue}\faCogs}]
+  \item Processes user input
+  \item Manages data structures (nodes array, edges array)
+  \item Updates the graph on each user action
+\end{itemize}
+
+\subsection{Visualization Component}
+
+Converts stored data into a visual representation:
+\begin{itemize}[leftmargin=2em, label={\color{SuccessGreen}\faProjectDiagram}]
+  \item Nodes displayed as circles
+  \item Edges displayed as connecting lines
+\end{itemize}
+
+\section{System Flow}
+
+\begin{center}
+\begin{tcolorbox}[
+  enhanced, colback=LightBlue, colframe=PrimaryBlue,
+  width=0.8\textwidth, halign=center,
+  arc=6pt, boxrule=0.8pt
+]
+\[
+\textbf{User Input}
+\;\longrightarrow\;
+\textbf{Processing}
+\;\longrightarrow\;
+\textbf{Data Update}
+\;\longrightarrow\;
+\textbf{Visualization}
+\]
+\end{tcolorbox}
+\end{center}
+
+Whenever the user interacts with the system, the graph is \textbf{re-rendered} to reflect the changes. This ensures that the output is always up to date.
+
+\section{Modular Design Principle}
+
+The design is \textbf{modular}, meaning each component works independently but contributes to the overall system. This makes the system easy to maintain and extend in the future.
+
+%======================================================================
+%  CHAPTER 8 — RESULTS AND ANALYSIS
+%======================================================================
+\chapter\textbf{\underline{Results and Analysis}}
+
+The implementation of the Social Network Analyzer successfully demonstrates the practical application of graph theory concepts. The system allows users to create and visualize networks in a simple and interactive way.
+
+\section{Performance Observations}
+
+During testing, the following observations were made:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{>{\bfseries\color{PrimaryBlue}}l X}
+\toprule
+Observation & Details \\
+\midrule
+Efficiency     & Performs well for small to medium-sized graphs with no noticeable delay. \\
+Dynamic Update & Graph updates immediately, providing real-time feedback. \\
+Clarity        & Nodes and edges are clearly distinguishable in the visualization. \\
+Usability      & Suitable for beginners and students due to simple interface. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Analysis}
+
+\begin{itemize}[leftmargin=2em, label={\color{AccentBlue}\faChartLine}]
+  \item Users can identify nodes with \textbf{multiple connections}, which may represent important or central entities in the network.
+  \item \textbf{Isolated nodes} can also be observed for connectivity analysis.
+  \item The system meets its objective of providing a simple and interactive graph visualization tool.
+\end{itemize}
+
+\section{Limitations Identified}
+
+The system is limited in terms of \textbf{advanced analysis}. It does not currently include:
+
+\begin{itemize}[leftmargin=2em, label={\color{MedGray}\faTimes}]
+  \item Shortest path calculation
+  \item Community detection
+  \item Persistent data storage
+\end{itemize}
+
+These features can be incorporated in future versions.
+
+%======================================================================
+%  CHAPTER 9 — APPLICATIONS
+%======================================================================
+\chapter\textbf{\underline{Applications}}
+
+The Social Network Analyzer has several practical applications across various fields.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.7}
+\begin{tabularx}{\textwidth}{>{\bfseries\color{PrimaryBlue}}l X}
+\toprule
+Field & Application \\
+\midrule
+Education           & Learning tool for understanding graph theory concepts. Students can visualize nodes and edges, making it easier to grasp abstract topics. \\
+Social Media        & Demonstrates how graph-based systems model user relationships at a basic level; can be extended to analyze real-world social networks. \\
+Data Visualization  & Complex relationships between data points can be represented using graphs for easier analysis and interpretation. \\
+Network Analysis    & Studying connections between entities in communication networks, transportation systems, and organizational structures. \\
+Advanced Systems    & Serves as a foundation for more advanced tools; by adding algorithms and database integration, it can become a full-scale network analysis platform. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+%======================================================================
+%  CHAPTER 10 — LIMITATIONS AND FUTURE WORK
+%======================================================================
+\chapter\textbf{\underline{Limitations and Future Work}}
+
+\section{Current Limitations}
+
+Although the Social Network Analyzer provides a useful platform for visualizing graphs, it has certain limitations:
+
+\begin{itemize}[leftmargin=2em, label={\color{MedGray}\faExclamationTriangle}]
+  \item \textbf{No Persistent Storage:} Since the system is entirely client-side, the data is not saved permanently. Once the page is refreshed, all data is lost.
+  \item \textbf{Scalability:} The system works well for small graphs but may face performance issues when handling large networks with many nodes and edges.
+  \item \textbf{Lack of Advanced Analytics:} Algorithms such as shortest path, centrality analysis, and community detection are not yet supported.
+  \item \textbf{Basic User Interface:} The interface is functional but can be improved to provide a richer user experience.
+\end{itemize}
+
+\section{Future Work}
+
+Future work can address these limitations through the following enhancements:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabularx}{\textwidth}{>{\bfseries\color{AccentBlue}}l X}
+\toprule
+Enhancement & Description \\
+\midrule
+Database Integration  & Integrate a database to store node and edge data permanently across sessions. \\
+Advanced Algorithms   & Implement Dijkstra's algorithm (shortest path), BFS/DFS, and centrality measures. \\
+Improved UI           & Redesign the interface for better interactivity, animations, and usability. \\
+Scalability Upgrade   & Optimize rendering to handle large-scale networks efficiently. \\
+Community Detection   & Add clustering algorithms to detect communities within the network. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+%======================================================================
+%  CHAPTER 11 — CODE / TECHNICAL IMPLEMENTATION
+%======================================================================
+\chapter\textbf{\underline{Code \& Technical Implementation}}
+
+The Social Network Analyzer is implemented using a combination of \textbf{HTML}, \textbf{CSS}, and \textbf{JavaScript}.
+
+\section{HTML — Structure}
+
+HTML defines the structure of the application, including:
+\begin{itemize}[leftmargin=2em, label={\color{AccentBlue}\faCode}]
+  \item Input fields for node names and edge selection
+  \item Buttons for triggering actions
+  \item Display areas (canvas/container) where the graph is rendered
+\end{itemize}
+
+\begin{lstlisting}[language=HTML, caption={HTML Structure Example}]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Social Network Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Social Network Analyzer</h1>
+  <input type="text" id="nodeName" placeholder="Enter node name">
+  <button onclick="addNode()">Add Node</button>
+
+  <input type="text" id="nodeA" placeholder="Node A">
+  <input type="text" id="nodeB" placeholder="Node B">
+  <button onclick="addEdge()">Connect Nodes</button>
+
+  <canvas id="graphCanvas" width="700" height="500"></canvas>
+  <script src="app.js"></script>
+</body>
+</html>
+\end{lstlisting}
+
+\section{CSS — Styling}
+
+CSS is used to style the application and improve its appearance. It ensures that the interface is visually appealing and easy to use.
+
+\begin{lstlisting}[language=HTML, caption={CSS Styling Example}]
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f4f8;
+  text-align: center;
+  padding: 20px;
+}
+h1 { color: #00467F; }
+input {
+  padding: 8px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+button {
+  background: #0078D7;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+canvas {
+  border: 2px solid #00467F;
+  background: #fff;
+  margin-top: 20px;
+}
+\end{lstlisting}
+
+\section{JavaScript — Core Logic}
+
+JavaScript is the most important component of the system. It handles all logic and functionality. The system uses \textbf{arrays} to store nodes and edges.
+
+\begin{lstlisting}[language=Java, caption={JavaScript Logic Example}]
+const nodes = [];
+const edges = [];
+
+function addNode() {
+  const name = document.getElementById('nodeName').value;
+  if (name && !nodes.includes(name)) {
+    nodes.push(name);
+    renderGraph();
+  }
+}
+
+function addEdge() {
+  const a = document.getElementById('nodeA').value;
+  const b = document.getElementById('nodeB').value;
+  if (nodes.includes(a) && nodes.includes(b)) {
+    edges.push({ from: a, to: b });
+    renderGraph();
+  }
+}
+
+function renderGraph() {
+  const canvas = document.getElementById('graphCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const positions = {};
+  const r = 180;
+  nodes.forEach((n, i) => {
+    const angle = (2 * Math.PI * i) / nodes.length;
+    positions[n] = {
+      x: 350 + r * Math.cos(angle),
+      y: 250 + r * Math.sin(angle)
+    };
+  });
+  // Draw edges
+  edges.forEach(e => {
+    const { x: x1, y: y1 } = positions[e.from];
+    const { x: x2, y: y2 } = positions[e.to];
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = '#0078D7';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+  // Draw nodes
+  nodes.forEach(n => {
+    const { x, y } = positions[n];
+    ctx.beginPath();
+    ctx.arc(x, y, 22, 0, 2 * Math.PI);
+    ctx.fillStyle = '#00467F';
+    ctx.fill();
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(n, x, y);
+  });
+}
+\end{lstlisting}
+
+%======================================================================
+%  CHAPTER 12 — TEAM CONTRIBUTION
+%======================================================================
+\chapter\textbf{\underline{Team Contribution}}
+
+The development of this project involved multiple tasks, including design, implementation, testing, and documentation.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.7}
+\begin{tabularx}{\textwidth}{>{\bfseries\color{PrimaryBlue}}l X}
+\toprule
+Task & Details \\
+\midrule
+UI Design          & The user interface was designed using HTML and styled with CSS to ensure simplicity and ease of use. \\
+Core Implementation & Core functionality was developed in JavaScript, including logic for node creation, edge connection, and graph visualization. \\
+Testing            & Various scenarios were tested (multiple nodes, edge connections, invalid inputs) to identify and fix issues. \\
+Documentation      & Comprehensive documentation was prepared covering methodology, implementation, and results. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Each part of the project contributes to the overall success of the system.
+
+%======================================================================
+%  CHAPTER 13 — CONCLUSION
+%======================================================================
+\chapter\textbf{\underline{Conclusion}}
+
+The \textbf{Social Network Analyzer} successfully demonstrates the application of graph theory concepts in a practical and interactive system. By allowing users to create and visualize networks, the project makes it easier to understand relationships between entities.
+
+\begin{infobox}[Key Achievements]
+\begin{itemize}[leftmargin=1.5em, label={\color{PrimaryBlue}\faCheckCircle}]
+  \item Provides a simple and effective way to explore graph structures.
+  \item Bridges the gap between theoretical knowledge and practical implementation.
+  \item Offers a working web-based platform accessible from any browser.
+  \item Lays a strong foundation for further advanced development.
+\end{itemize}
+\end{infobox}
+
+\vspace{0.4cm}
+
+Although the system has certain limitations, it provides a strong foundation for further development. With additional features and improvements, it can be expanded into a more advanced \textbf{network analysis tool}.
+
+Overall, the project achieves its objective of providing an interactive platform for understanding graph theory concepts and their practical applications in the real world.
+
+%======================================================================
+%  REFERENCES
+%======================================================================
+\chapter*\textbf{\underline{References}}
+\addcontentsline{toc}{chapter}{References}
+\markboth{References}{References}
+
+\begin{enumerate}[leftmargin=2em,
+                  label={\color{PrimaryBlue}[\arabic*]}]
+  \item Kenneth H. Rosen, \textit{Discrete Mathematics and Its Applications}, 7th~ed.\ McGraw-Hill Education.
+  \item W3Schools Online Web Tutorials. \textit{HTML, CSS, and JavaScript Documentation}.
+        [Online]. Available: \url{https://www.w3schools.com}
+  \item MDN Web Docs — Mozilla Developer Network. \textit{Web Technology Documentation}.
+        [Online]. Available: \url{https://developer.mozilla.org}
+\end{enumerate}
+
+\end{document}
+\begin{document}
+
+\maketitle
+
+\section{First Section}
+
+Hello World!
+
+\end{document}
